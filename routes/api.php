@@ -111,10 +111,11 @@ Route::middleware('auth:sanctum')->group(function () {
     // ==========================
     // 🔹 CUSTOMER CHECKOUT
     // ==========================
-    Route::get('/checkout', [CustomerCheckoutController::class, 'index']);
-    Route::post('/checkout', [CustomerCheckoutController::class, 'store']);
-    Route::get('/checkout/success/{order}', [CustomerCheckoutController::class, 'success']);
-    Route::get('/checkout/cancel/{order?}', [CustomerCheckoutController::class, 'cancel']);
+    Route::get('/checkout', [CustomerCheckoutController::class, 'index'])->name('checkout.index');
+    Route::post('/checkout', [CustomerCheckoutController::class, 'store'])->name('checkout.store');
+    Route::get('/checkout/success/{order}', [CustomerCheckoutController::class, 'success'])->name('checkout.success');
+    Route::get('/checkout/cancel/{order?}', [CustomerCheckoutController::class, 'cancel'])->name('checkout.cancel');
+
 
     // ==========================
     // 🔹 CUSTOMER REVIEWS

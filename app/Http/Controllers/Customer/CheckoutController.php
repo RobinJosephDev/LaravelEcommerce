@@ -24,12 +24,14 @@ class CheckoutController extends Controller
      */
     public function index()
     {
-        /** @var User $user */
         $user = Auth::user();
         $cart = $user->cart ?? $user->cart()->create();
 
-        return view('checkout.index', compact('cart'));
+        return response()->json([
+            'cart' => $cart->items()->with('product')->get(),
+        ]);
     }
+
 
     /**
      * Process checkout and create order
@@ -84,7 +86,10 @@ class CheckoutController extends Controller
             'cancel_url' => route('checkout.cancel'),
         ]);
 
-        return redirect($session->url);
+        return response()->json([
+            'url' => $session->url,
+            'message' => 'Stripe Checkout session created successfully.'
+        ]);
     }
 
     /**
@@ -96,17 +101,11 @@ class CheckoutController extends Controller
     public function success(Order $order)
     {
         $order->update(['payment_status' => 'paid', 'status' => 'processing']);
-        return view('checkout.success', compact('order'));
+        return response()->json(['message' => 'Payment successful', 'order' => $order]);
     }
 
-    /**
-     * Stripe cancel callback
-     *
-     * @param Order $order
-     * @return \Illuminate\View\View
-     */
     public function cancel(Order $order)
     {
-        return view('checkout.cancel', compact('order'));
+        return response()->json(['message' => 'Payment cancelled']);
     }
 }

@@ -37,7 +37,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role',
+        'role'
     ];
 
     protected $hidden = [
@@ -50,7 +50,6 @@ class User extends Authenticatable
     ];
 
     // Relationships
-
     public function products(): HasMany
     {
         return $this->hasMany(Product::class, 'user_id');
