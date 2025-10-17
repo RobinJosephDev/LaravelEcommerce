@@ -4,26 +4,43 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $orders = Order::with('user', 'items.product')->paginate(20);
-        return view('admin.orders.index', compact('orders'));
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $orders
+        ]);
     }
 
-    public function show(Order $order)
+    public function show(Order $order, Request $request)
     {
         $order->load('items.product', 'payment', 'user');
-        return view('admin.orders.show', compact('order'));
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $order
+        ]);
     }
 
-    public function updateStatus(Order $order)
+    public function updateStatus(Request $request, Order $order)
     {
-        // Update status (e.g. shipped/delivered)
-        $order->status = request()->status;
+        $request->validate([
+            'status' => 'required|string|in:pending,processing,shipped,delivered,cancelled',
+        ]);
+
+        $order->status = $request->status;
         $order->save();
-        return redirect()->back()->with('success', 'Order status updated.');
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Order status updated successfully',
+            'data' => $order
+        ]);
     }
 }

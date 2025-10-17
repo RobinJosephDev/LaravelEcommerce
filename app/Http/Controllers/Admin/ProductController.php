@@ -30,6 +30,17 @@ class ProductController extends Controller
         return view('admin.products.create', compact('categories'));
     }
 
+    public function show(Product $product)
+    {
+        $product->load(['vendor', 'categories']);
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $product
+        ]);
+    }
+
+
     public function store(Request $request)
     {
         $data = $request->validate([

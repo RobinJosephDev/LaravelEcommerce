@@ -13,8 +13,14 @@ class ProductController extends Controller
     public function index()
     {
         $products = Auth::user()->products()->with('categories')->paginate(15);
-        return view('vendor.products.index', compact('products'));
+        return response()->json($products);
     }
+
+    public function show(Product $product)
+    {
+        return response()->json($product->load('categories'));
+    }
+
 
     public function create()
     {
@@ -51,7 +57,6 @@ class ProductController extends Controller
 
     public function update(Request $request, Product $product)
     {
-        $this->authorize('update', $product);
 
         $data = $request->validate([
             'name' => 'required|string|max:150',
@@ -72,7 +77,6 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
-        $this->authorize('delete', $product);
         $product->delete();
         return redirect()->route('vendor.products.index')->with('success', 'Product deleted.');
     }
